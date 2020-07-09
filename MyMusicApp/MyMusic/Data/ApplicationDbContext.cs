@@ -18,5 +18,6 @@ namespace MyMusic.Data
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<Song> Songs { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<SongImage> SongImages { get; set; }
     }
 }

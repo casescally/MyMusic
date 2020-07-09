@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace MyMusic.Controllers.V1
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText =
-                        @"SELECT * FROM Songs";
+                        @"SELECT * FROM Songs WHERE ActiveSong = True";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Song> songs = new List<Song>();
@@ -93,11 +94,11 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT s.Id, s.Name, s.Url, s.ApplicationUserId, s.Genre, s.CoverUrl, s.Description, s.ForSale, s.ImageFileName, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader, a.ActiveUser
+                    cmd.CommandText = @"SELECT s.Id, s.Name, s.Url, s.ApplicationUserId, s.Genre, s.CoverUrl, s.Description, s.ForSale, s.ImageFileName, a.ActiveSong, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader, a.ActiveUser
                                         FROM Songs s
                                         LEFT JOIN AspNetUsers a
                                         ON c.ApplicationUserId = a.Id
-                                        WHERE c.Id = @id AND c.activeCar = 'true'";
+                                        WHERE c.Id = @id AND c.activeSong = 'true'";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -170,20 +171,124 @@ namespace MyMusic.Controllers.V1
 
         // POST: api/Songs
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromForm] Song newSong)
         {
+                        using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Songs (Name,  Url, ApplicationUserId, Genre, CoverUrl, Description, ForSale, ImageFileNames, ActiveSong)
+                                        OUTPUT INSERTED.Id
+                                        VALUES (@name, @url, @applicationUserId, @genre, @coverUrl, @description, @forSale, @imageFileName, @activeSong)";
+
+                    cmd.Parameters.Add(new SqlParameter("@name", newSong.Name));
+                    cmd.Parameters.Add(new SqlParameter("@url", newSong.Url));
+                    cmd.Parameters.Add(new SqlParameter("@applicationUserId", newSong.ApplicationUserId));
+                    cmd.Parameters.Add(new SqlParameter("@genre", newSong.Genre));
+                    cmd.Parameters.Add(new SqlParameter("@coverUrl", newSong.CoverUrl));
+                    cmd.Parameters.Add(new SqlParameter("@description", newSong.Description));
+                    cmd.Parameters.Add(new SqlParameter("@forSale", newSong.ForSale));
+                    cmd.Parameters.Add(new SqlParameter("@imageFileNames", newSong.ImageFileName));
+                    cmd.Parameters.Add(new SqlParameter("@activeSong", newSong.ActiveSong));
+
+                    int newId = (int)cmd.ExecuteScalar();
+                    newSong.Id = newId;
+
+                }
+            }
         }
 
         // PUT: api/Songs/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult>Put([FromRoute]int id, [FromBody] Song updatedSong)
         {
+                       try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Songs
+                                            SET Name = @name,
+                                            Url = @url,
+                                            ApplicationUserId = @applicationUserId,
+                                            Genre = @genre,
+                                            CoverUrl = @coverUrl,
+                                            Description = @description,
+                                            ForSale = @forSale,
+                                            ImageFileNames = @imageFileNames,
+                                            ActiveSong = @activeSong,
+                                            WHERE Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    cmd.Parameters.Add(new SqlParameter("@name", updatedSong.Name));
+                    cmd.Parameters.Add(new SqlParameter("@url", updatedSong.Url));
+                    cmd.Parameters.Add(new SqlParameter("@applicationUserId", updatedSong.ApplicationUserId));
+                    cmd.Parameters.Add(new SqlParameter("@genre", updatedSong.Genre));
+                    cmd.Parameters.Add(new SqlParameter("@coverUrl", updatedSong.CoverUrl));
+                    cmd.Parameters.Add(new SqlParameter("@description", updatedSong.Description));
+                    cmd.Parameters.Add(new SqlParameter("@forSale", updatedSong.ForSale));
+                    cmd.Parameters.Add(new SqlParameter("@imageFileNames", updatedSong.ImageFileName));
+                    cmd.Parameters.Add(new SqlParameter("@activeSong", updatedSong.ActiveSong));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                            return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!SongExists(id))
+                { 
+                    return NotFound();
+                    } else
+                {
+                    throw;
+                }
+            }
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult>Delete(int id)
         {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Songs
+                                            SET ActiveSong = 'false'
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+                             return new StatusCodeResult(StatusCodes.Status204NoContent);
+                        }
+                        throw new Exception("No rows affected");
+                    }
+                }
+            }
+                        catch (Exception)
+            {
+                if (!SongExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
                  private bool SongExists(int id)
         {

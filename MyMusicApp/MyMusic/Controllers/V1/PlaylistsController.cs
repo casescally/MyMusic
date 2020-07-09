@@ -5,12 +5,32 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyMusic.Controllers
+namespace MyMusic.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiController]
     public class PlaylistsController : ControllerBase
     {
+
+                private readonly IConfiguration _config;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public LikedCarsController(IConfiguration config, UserManager<ApplicationUser> userManager)
+
+        {
+            _config = config;
+            _userManager = userManager;
+        }
+
+        public SqlConnection Connection
+
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
+
         // GET: api/Playlists
         [HttpGet]
         public IEnumerable<string> Get()
