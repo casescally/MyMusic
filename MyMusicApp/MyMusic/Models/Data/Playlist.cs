@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyMusic.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +11,10 @@ namespace MyMusic.Models.Data
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
+        public ApplicationUserViewModel ApplicationUser { get; set; }
         //admin user
         public String ApplicationUserId { get; set; }
+        //comma seperated list of song ids
         public string SongIds { get; set; }
 
     }

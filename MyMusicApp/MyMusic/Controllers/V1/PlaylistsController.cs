@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using MyMusic.Models.Data;
+using MyMusic.Models.ViewModels;
 
 namespace MyMusic.Controllers.V1
 {
@@ -47,10 +48,10 @@ namespace MyMusic.Controllers.V1
                 {
                     cmd.CommandText =
 
-                        @"SELECT pl.Id AS Id, pl.UserId AS UserId, pl.SongIds AS SongIds
+                        @"SELECT pl.Id AS Id, pl.ApplicationUserId, pl.SongIds AS SongIds
                           FROM PLaylists pl
                           LEFT JOIN AspNetUsers a
-                          ON pl.UserId = a.Id";
+                          ON pl.ApplicationUserId = a.Id";
                 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -69,9 +70,12 @@ namespace MyMusic.Controllers.V1
 
                         };        
 
-                            foundPlaylist.ApplicationUser = new ApplicationUser { 
+                            foundPlaylist.ApplicationUser = new ApplicationUserViewModel { 
 
-                                Id = reader.GetString(reader.GetOrdinal("UserId")),
+                                Id = reader.GetString(reader.GetOrdinal("AdminId")),
+                                Username = reader.GetString(reader.GetOrdinal("UserName")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
 
                         };
 
@@ -97,10 +101,10 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT pl.Id, pl.UserId, pl.SongIds, a.Id, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader
+                    cmd.CommandText = @"SELECT pl.Id, pl.ApplicationUserId, pl.SongIds, a.Id, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader
                                         FROM Playlists pl
                                         LEFT JOIN AspNetUsers a
-                                        ON pl.UserId = a.Id";
+                                        ON pl.ApplicationUserId = a.Id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -116,14 +120,15 @@ namespace MyMusic.Controllers.V1
 
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            ApplicationUserId = reader.GetString(reader.GetOrdinal("UserId")),
+                            ApplicationUserId = reader.GetString(reader.GetOrdinal("ApplicationUserId")),
                             SongIds = reader.GetString(reader.GetOrdinal("SongIds"))
 
                         };        
 
-                            individualPlaylist.ApplicationUser = new ApplicationUser { 
+                            individualPlaylist.ApplicationUser = new ApplicationUserViewModel { 
 
                                 Id = reader.GetString(reader.GetOrdinal("AdminId")),
+                                Username = reader.GetString(reader.GetOrdinal("UserName")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
 
@@ -154,7 +159,7 @@ namespace MyMusic.Controllers.V1
                                         OUTPUT INSERTED.Id
                                         VALUES (@applicationUserId, @songIds)";
 
-                    cmd.Parameters.Add(new SqlParameter("@applicaitonUserId", newPlaylist.ApplicationUserId));
+                    cmd.Parameters.Add(new SqlParameter("@applicationUserId", newPlaylist.ApplicationUserId));
                     cmd.Parameters.Add(new SqlParameter("@songIds", newPlaylist.SongIds));
 
                     int newId = (int)cmd.ExecuteScalar();
