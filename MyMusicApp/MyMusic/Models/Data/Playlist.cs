@@ -13,7 +13,7 @@ namespace MyMusic.Models.Data
         public ApplicationUser ApplicationUser { get; set; }
         //admin user
         public String ApplicationUserId { get; set; }
-        public int SongId { get; set; }
+        public string SongIds { get; set; }
 
     }
 }
