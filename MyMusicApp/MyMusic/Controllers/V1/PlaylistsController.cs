@@ -93,7 +93,7 @@ namespace MyMusic.Controllers.V1
         }
 
         // GET: api/Playlists/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "GetPlaylist")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
  using (SqlConnection conn = Connection)
@@ -101,7 +101,7 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT pl.Id, pl.ApplicationUserId, pl.SongIds, a.Id, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader
+                    cmd.CommandText = @"SELECT pl.Id, pl.Name, pl.ApplicationUserId, pl.SongIds, a.Id AS UserId, a.UserName, a.FirstName, a.LastName
                                         FROM Playlists pl
                                         LEFT JOIN AspNetUsers a
                                         ON pl.ApplicationUserId = a.Id";
@@ -127,7 +127,7 @@ namespace MyMusic.Controllers.V1
 
                             individualPlaylist.ApplicationUser = new ApplicationUserViewModel { 
 
-                                Id = reader.GetString(reader.GetOrdinal("AdminId")),
+                                Id = reader.GetString(reader.GetOrdinal("UserId")),
                                 Username = reader.GetString(reader.GetOrdinal("UserName")),
                                 FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
@@ -155,11 +155,12 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Playlists (ApplicationUserId, SongIds)
+                    cmd.CommandText = @"INSERT INTO Playlists (ApplicationUserId, SongIds, Name)
                                         OUTPUT INSERTED.Id
-                                        VALUES (@applicationUserId, @songIds)";
+                                        VALUES (@applicationUserId, @songIds, @name)";
 
                     cmd.Parameters.Add(new SqlParameter("@applicationUserId", newPlaylist.ApplicationUserId));
+                    cmd.Parameters.Add(new SqlParameter("@name", newPlaylist.Name));
                     cmd.Parameters.Add(new SqlParameter("@songIds", newPlaylist.SongIds));
 
                     int newId = (int)cmd.ExecuteScalar();
@@ -184,6 +185,7 @@ namespace MyMusic.Controllers.V1
                                             SET Name = @Name,
                                             SongIds = @SongIds
                                             WHERE Id = @id";
+
                     cmd.Parameters.Add(new SqlParameter("@name", updatedPlaylist.Name));
                     cmd.Parameters.Add(new SqlParameter("@songIds", updatedPlaylist.SongIds));
 

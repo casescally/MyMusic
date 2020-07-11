@@ -54,7 +54,7 @@ namespace MyMusic.Controllers.V1
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText =
-                        @"SELECT * FROM Songs WHERE ActiveSong = True";
+                        @"SELECT * FROM Songs WHERE ActiveSong = 1";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Song> songs = new List<Song>();
@@ -94,11 +94,11 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT s.Id, s.Name, s.Url, s.ApplicationUserId, s.Genre, s.CoverUrl, s.Description, s.ForSale, s.ImageFileName, a.ActiveSong, a.FirstName, a.LastName, a.StreetAddress, a.ProfilePicturePath, a.ProfileBackgroundPicturePath, a.Description, a.ProfileHeader, a.ActiveUser
+                    cmd.CommandText = @"SELECT s.Id, s.Name, s.Url, s.ApplicationUserId, s.Genre, s.CoverUrl, s.Description, s.ForSale, s.ImageFileName, s.ActiveSong, a.UserName, a.FirstName, a.LastName
                                         FROM Songs s
                                         LEFT JOIN AspNetUsers a
-                                        ON c.ApplicationUserId = a.Id
-                                        WHERE c.Id = @id AND c.activeSong = 'true'";
+                                        ON s.ApplicationUserId = a.Id
+                                        WHERE s.Id = @id AND s.ActiveSong = 1";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -178,7 +178,7 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Songs (Name,  Url, ApplicationUserId, Genre, CoverUrl, Description, ForSale, ImageFileNames, ActiveSong)
+                    cmd.CommandText = @"INSERT INTO Songs (Name, Url, ApplicationUserId, Genre, CoverUrl, Description, ForSale, ImageFileName, ActiveSong)
                                         OUTPUT INSERTED.Id
                                         VALUES (@name, @url, @applicationUserId, @genre, @coverUrl, @description, @forSale, @imageFileName, @activeSong)";
 
@@ -189,7 +189,7 @@ namespace MyMusic.Controllers.V1
                     cmd.Parameters.Add(new SqlParameter("@coverUrl", newSong.CoverUrl));
                     cmd.Parameters.Add(new SqlParameter("@description", newSong.Description));
                     cmd.Parameters.Add(new SqlParameter("@forSale", newSong.ForSale));
-                    cmd.Parameters.Add(new SqlParameter("@imageFileNames", newSong.ImageFileName));
+                    cmd.Parameters.Add(new SqlParameter("@imageFileName", newSong.ImageFileName));
                     cmd.Parameters.Add(new SqlParameter("@activeSong", newSong.ActiveSong));
 
                     int newId = (int)cmd.ExecuteScalar();
@@ -218,8 +218,8 @@ namespace MyMusic.Controllers.V1
                                             CoverUrl = @coverUrl,
                                             Description = @description,
                                             ForSale = @forSale,
-                                            ImageFileNames = @imageFileNames,
-                                            ActiveSong = @activeSong,
+                                            ImageFileName = @imageFileName,
+                                            ActiveSong = @activeSong
                                             WHERE Id = @id";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
@@ -230,7 +230,7 @@ namespace MyMusic.Controllers.V1
                     cmd.Parameters.Add(new SqlParameter("@coverUrl", updatedSong.CoverUrl));
                     cmd.Parameters.Add(new SqlParameter("@description", updatedSong.Description));
                     cmd.Parameters.Add(new SqlParameter("@forSale", updatedSong.ForSale));
-                    cmd.Parameters.Add(new SqlParameter("@imageFileNames", updatedSong.ImageFileName));
+                    cmd.Parameters.Add(new SqlParameter("@imageFileName", updatedSong.ImageFileName));
                     cmd.Parameters.Add(new SqlParameter("@activeSong", updatedSong.ActiveSong));
 
                         int rowsAffected = cmd.ExecuteNonQuery();
