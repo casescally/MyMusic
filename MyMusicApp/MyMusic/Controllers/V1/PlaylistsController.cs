@@ -181,13 +181,14 @@ namespace MyMusic.Controllers.V1
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"UPDATE Playlists
-                                            SET Name = @Name,
-                                            SongIds = @SongIds
+                        cmd.CommandText = @"UPDATE MyMusic.dbo.Playlists
+                                            SET Name = @name,
+                                            SongIds = @songIds
                                             WHERE Id = @id";
 
-                    cmd.Parameters.Add(new SqlParameter("@name", updatedPlaylist.Name));
-                    cmd.Parameters.Add(new SqlParameter("@songIds", updatedPlaylist.SongIds));
+                    cmd.Parameters.Add(new SqlParameter("@Id", id));
+                    cmd.Parameters.Add(new SqlParameter("@Name", updatedPlaylist.Name));
+                    cmd.Parameters.Add(new SqlParameter("@SongIds", updatedPlaylist.SongIds));
 
                         int rowsAffected = cmd.ExecuteNonQuery();
                         if (rowsAffected > 0)
