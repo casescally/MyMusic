@@ -5,7 +5,7 @@ import "./Songs.css";
 //import { getUser } from "../../API/userManager";
 
 export default ({ song }) => {
-  const { users } = useContext(UserContext);
+  //const { users } = useContext(UserContext);
   //const songUser = users.find((u) => u.id === song.userId) || {};
   const [songImages, setSongImages] = useState([]);
 
@@ -29,7 +29,6 @@ export default ({ song }) => {
           <Link to={`/songs/${song.id}`} className="songLink">
             {song.name + "    "}
           </Link>
-          {song.date.slice(0, 10)}
         </h3>
         <img className="coverImage" src={song.songCoverUrl}></img>
       </div>

@@ -2,11 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { SongContext } from "./SongProvider";
 import { getUser } from "../../API/userManager";
 import "./Songs.css";
-import ThumbnailGallery from "../thumbnail-gallery/Thumbnail-Gallery";
 
 export default (props) => {
   const user = getUser();
-  const { songs, addSong, saveImages, saveImage, updateSong } = useContext(
+  const {  songs, addSong, saveImages, saveImage, updateSong } = useContext(
     SongContext
   );
   const [song, setSong] = useState({});
@@ -67,12 +66,12 @@ export default (props) => {
     } else {
 
       let filePaths = [];
-
+      let coverIMG = [];
       if (newSongsFiles.length) {
         console.log("before uploadd upp===>>>", newSongsFiles);
         const uploadedSongImages = await saveImages(newSongsFiles);
         filePaths = JSON.parse(uploadedSongImages);
-        coverIMG = filePaths[0];
+        const coverIMG = filePaths[0];
         console.log("upp==>>>>>", JSON.stringify(filePaths));
       }
 

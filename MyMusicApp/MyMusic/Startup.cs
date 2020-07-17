@@ -68,7 +68,34 @@ namespace MyMusic
                 x.TokenValidationParameters = tokenValidationParams;
             });
 
+                services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    }));
+
+
             services.AddScoped<IUserService, UserService>();
+
+                    services.AddCors(options =>
+        {
+            options.AddPolicy("Policy1",
+                builder =>
+                {
+                    builder.WithOrigins("http://example.com",
+                                        "http://www.contoso.com");
+                });
+
+            options.AddPolicy("AnotherPolicy",
+                builder =>
+                {
+                    builder.WithOrigins("http://www.contoso.com")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                });
+        });
+
 
             services.AddControllers();
 
@@ -131,6 +158,8 @@ namespace MyMusic
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+                    app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

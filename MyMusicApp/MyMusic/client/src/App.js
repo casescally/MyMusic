@@ -7,6 +7,7 @@ import Register from "./components/Register";
 import { getUser } from "./API/userManager";
 import { SongList } from "./components/song/SongList";
 import { Main } from "./components/main/Main";
+import { SongProvider } from "./components/song/SongProvider";
 
 import "./App.css";
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <div className="App">
       <Router>
+      <SongProvider>     
         <Header />
         <Route exact path="/" render={(props) => <Main {...props} />} />
         <Route
@@ -32,6 +34,12 @@ function App() {
           path="/register"
           render={() => (getUser() ? <Redirect to="/" /> : <Register />)}
         />
+<Route
+          render={() =>
+            getUser() ? <ApplicationViews /> : <Redirect to="/login" />
+          }
+        /> 
+        </SongProvider>
       </Router>
     </div>
   );

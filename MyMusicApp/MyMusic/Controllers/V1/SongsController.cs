@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,7 @@ namespace MyMusic.Controllers.V1
 
 
         // GET: api/Songs
+        [EnableCors("MyPolicy")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -86,6 +88,7 @@ namespace MyMusic.Controllers.V1
         }
 
         // GET: api/Songs/5
+        [EnableCors("MyPolicy")]
         [HttpGet("{id}", Name = "GetSong")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -131,7 +134,7 @@ namespace MyMusic.Controllers.V1
             }
         }
 
-                [HttpPost("files")]
+        [HttpPost("files")]
         public async Task<List<string>> PostFile()
         {
             var savedFilePaths = new List<string>();
