@@ -160,6 +160,32 @@ namespace MyMusic.Controllers.V1
             return savedFilePaths;
         }
 
+                [HttpPost("audioFile")]
+        public async Task<List<string>> PostAudioFile()
+        {
+            var savedAudioFilePaths = new List<string>();
+
+            if (Request.Form.Files.Count > 0)
+            {
+                EnsureUploadDirectoryExists();
+                foreach (IFormFile file in Request.Form.Files)
+                {
+                    string savedFilePath = String.Empty;
+                    if (file != null && file.Length > 0)
+                    {
+                        savedFilePath = _environment.WebRootPath + "\\Upload\\"+ Path.GetFileName(file.FileName);
+                        using (var fileStream = new FileStream(savedFilePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                        savedAudioFilePaths.Add(savedFilePath);
+                    }
+                }
+            }
+
+            return savedAudioFilePaths;
+        }
+
         private static void EnsureUploadDirectoryExists()
         {
             if (String.IsNullOrWhiteSpace(_environment.WebRootPath))

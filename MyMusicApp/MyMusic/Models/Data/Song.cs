@@ -17,6 +17,7 @@ namespace MyMusic.Models.Data
         public string Description { get; set; }
         public bool ForSale { get; set; }
         public string ImageFileName { get; set; }
+        public string AudioFileName { get; set; }
         public bool ActiveSong { get; set; }
     }
 }

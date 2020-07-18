@@ -5,7 +5,7 @@ import "./Songs.css";
 
 export default (props) => {
   const user = getUser();
-  const {  songs, addSong, saveImages, saveImage, updateSong } = useContext(
+  const { songs, addSong, saveImages, saveImage, updateSong } = useContext(
     SongContext
   );
   const [song, setSong] = useState({});
@@ -16,7 +16,6 @@ export default (props) => {
   const editMode = props.match.params.hasOwnProperty("songId");
 
   const handleControlledInputChange = (event) => {
-
     const newSong = Object.assign({}, song);
     newSong[event.target.name] = event.target.value;
     setSong(newSong);
@@ -33,7 +32,6 @@ export default (props) => {
   useEffect(() => {
     setDefaults();
   }, [songs]);
-
 
   const constructNewSong = async () => {
     if (editMode) {
@@ -53,7 +51,6 @@ export default (props) => {
         existingCoverImg = songCoverImage;
       }
 
-
       updateSong({
         ...song,
         genre: parseInt(song.genre),
@@ -64,7 +61,6 @@ export default (props) => {
         props.history.push("/songs");
       });
     } else {
-
       let filePaths = [];
       let coverIMG = [];
       if (newSongsFiles.length) {
@@ -74,7 +70,6 @@ export default (props) => {
         const coverIMG = filePaths[0];
         console.log("upp==>>>>>", JSON.stringify(filePaths));
       }
-
 
       addSong({
         name: song.name,
@@ -93,16 +88,13 @@ export default (props) => {
     if (images) setSongImages(JSON.parse(images));
   }, [song.imageFileNames]);
 
-
   const updateSongsCoverImage = (file) => {
-
-if (file && file.startsWith("blob")) {
-  
-    setNewSongsCoverFile([file]);
-}
+    if (file && file.startsWith("blob")) {
+      setNewSongsCoverFile([file]);
+    }
 
     //console.log('upppdatedddd===>>>>', file, 'newCOV', newSongsCoverFile)
-}
+  };
 
   const handleAddImages = (files) => {
     //console.log("heyyup==>>>", files);
@@ -127,7 +119,24 @@ if (file && file.startsWith("blob")) {
   console.log(songImages);
   return (
     <form className="songForm">
-      <h2 className="songForm__title">{editMode ? "Update Song" : "Add Song"}</h2>
+      <h2 className="songForm__title">
+        {editMode ? "Update Song" : "Add Song"}
+      </h2>
+      <fieldset>
+        <div className="form-group">
+          <label htmlFor="name">Song name: </label>
+          <input
+            type="file"
+            name="file"
+            required
+            autoFocus
+            className="form-control"
+            proptype="varchar"
+            placeholder="Song file"
+            onChange={handleControlledInputChange}
+          />
+        </div>
+      </fieldset>
       <fieldset>
         <div className="form-group">
           <label htmlFor="name">Song name: </label>
@@ -155,8 +164,7 @@ if (file && file.startsWith("blob")) {
             placeholder="Genre"
             defaultValue={song.genre}
             onChange={handleControlledInputChange}
-          >
-          </input>
+          ></input>
         </div>
       </fieldset>
       <fieldset>

@@ -27,7 +27,7 @@ export default ({ song }) => {
         ))}
         <h3 className="song__name">
           <Link to={`/songs/${song.id}`} className="songLink">
-            {song.name + "    "}
+            {song.name}
           </Link>
         </h3>
         <img className="coverImage" src={song.songCoverUrl}></img>
