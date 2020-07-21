@@ -7,7 +7,7 @@ function Header({ history }) {
 
   const logout = () => {
     removeUser();
-    history.push("/login");
+    history.push("/");
   };
 
   return (

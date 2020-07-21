@@ -27,7 +27,9 @@ function App() {
         <Route
           exact
           path="/login"
-          render={() => (getUser() ? <Redirect to="/" /> : <Login />)}
+          render={() => (
+            
+            getUser() ? <Redirect to="/" /> : <Login />)}
         />
         <Route
           exact

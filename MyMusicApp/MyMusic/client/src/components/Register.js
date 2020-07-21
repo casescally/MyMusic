@@ -72,7 +72,7 @@ function Register({ history }) {
       </div>
       <button type="submit">Register</button>
       <p>
-        Already registered? <Link to="/login">Log in</Link>
+        Already registered? <Link to="/">Log in</Link>
       </p>
     </form>
   );
