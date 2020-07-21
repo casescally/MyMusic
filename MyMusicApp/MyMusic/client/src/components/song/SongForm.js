@@ -5,14 +5,14 @@ import "./Songs.css";
 
 export default (props) => {
   const user = getUser();
-  const { songs, addSong, saveImages, saveImage, updateSong } = useContext(
+  const { songs, addSong, saveImages, saveFile, updateSong } = useContext(
     SongContext
   );
   const [song, setSong] = useState({});
   const [songImages, setSongImages] = useState([]);
-  const [songCoverImage, setSongCoverImage] = useState([]);
+  //const [songAudioFile, setNewSongsAudioFile] = useState([]);
   const [newSongsFiles, setNewSongsFiles] = useState([]);
-  const [newSongsCoverFile, setNewSongsCoverFile] = useState([]);
+  const [newSongsAudioFile, setNewSongsAudioFile] = useState([]);
   const editMode = props.match.params.hasOwnProperty("songId");
 
   const handleControlledInputChange = (event) => {
@@ -37,26 +37,26 @@ export default (props) => {
     if (editMode) {
       //Filter the song images that are not blob data
       let existingImgs = songImages.filter((song) => !song.startsWith("blob"));
-      let existingCoverImg = songCoverImage.filter(
-        (coverImg) => !coverImg.startsWith("blob")
+      let existingAudioFile = newSongsAudioFile.filter(
+        (file) => !file.startsWith("blob")
       );
-      //let existingCoverImg = songPageCoverUrl
+
       if (newSongsFiles.length) {
         const filePaths = JSON.parse(await saveImages(newSongsFiles));
         existingImgs = existingImgs.concat(filePaths);
       }
 
-      if (newSongsCoverFile.length) {
-        const songCoverImage = JSON.parse(await saveImages(newSongsCoverFile));
-        existingCoverImg = songCoverImage;
+      if (newSongsAudioFile.length) {
+        const songCoverImage = JSON.parse(await saveFile(newSongsAudioFile));
+        existingAudioFile = songCoverImage;
       }
 
       updateSong({
         ...song,
         genre: parseInt(song.genre),
         applicationUserId: user.id,
-        songPageCoverUrl: JSON.stringify(existingCoverImg),
-        imageFileNames: JSON.stringify(existingImgs),
+        songAudioFile: JSON.stringify(existingAudioFile),
+        //imageFileNames: JSON.stringify(existingImgs),
       }).then(() => {
         props.history.push("/songs");
       });
@@ -88,19 +88,19 @@ export default (props) => {
     if (images) setSongImages(JSON.parse(images));
   }, [song.imageFileNames]);
 
-  const updateSongsCoverImage = (file) => {
+  const updateSongsAudioFile = (file) => {
     if (file && file.startsWith("blob")) {
-      setNewSongsCoverFile([file]);
+      setNewSongsAudioFile([file]);
     }
 
     //console.log('upppdatedddd===>>>>', file, 'newCOV', newSongsCoverFile)
   };
 
-  const handleAddImages = (files) => {
+  const handleAddAudioFile = (file) => {
     //console.log("heyyup==>>>", files);
-    const newImgs = files.map((file) => URL.createObjectURL(file));
-    setSongImages([...newImgs, ...songImages]);
-    setNewSongsFiles(files.concat(newSongsFiles));
+    const newFile = URL.createObjectURL(file);
+    setNewSongsAudioFile([newFile]);
+    setNewSongsFiles(newSongsFiles);
   };
 
   const handleRemoveImage = (index) => {
@@ -116,7 +116,7 @@ export default (props) => {
     setSongImages(updatedImages);
   };
 
-  console.log(songImages);
+  console.log(song);
   return (
     <form className="songForm">
       <h2 className="songForm__title">
@@ -124,7 +124,7 @@ export default (props) => {
       </h2>
       <fieldset>
         <div className="form-group">
-          <label htmlFor="name">Song name: </label>
+          <label htmlFor="name">Song file: </label>
           <input
             type="file"
             name="file"
@@ -133,7 +133,7 @@ export default (props) => {
             className="form-control"
             proptype="varchar"
             placeholder="Song file"
-            onChange={handleControlledInputChange}
+            onChange={handleAddAudioFile}
           />
         </div>
       </fieldset>

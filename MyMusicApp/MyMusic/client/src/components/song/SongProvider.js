@@ -50,14 +50,14 @@ export const SongProvider = (props) => {
     return response.text();
   };
 
-  const saveImage = async (file) => {
+  const saveFile = async (file) => {
     const authHeader = createAuthHeaders();
     const formData = new FormData();
     if (file) {
       formData.append(file.name, file);
     }
 
-    const response = await fetch("https://localhost:5001/api/songs/files", {
+    const response = await fetch("https://localhost:5001/api/songs/Songs/audioFile", {
       // content-type header should not be specified!
       method: "POST",
       headers: {
@@ -141,7 +141,7 @@ export const SongProvider = (props) => {
         deleteSong,
         updateSong,
         saveImages,
-        saveImage,
+        saveFile,
       }}
     >
       {props.children}
