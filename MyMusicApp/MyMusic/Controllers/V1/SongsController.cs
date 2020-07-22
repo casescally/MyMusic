@@ -133,7 +133,7 @@ namespace MyMusic.Controllers.V1
                 }
             }
         }
-
+        [EnableCors("MyPolicy")]
         [HttpPost("files")]
         public async Task<List<string>> PostFile()
         {
@@ -199,6 +199,7 @@ namespace MyMusic.Controllers.V1
         }
 
         // POST: api/Songs
+        [EnableCors("MyPolicy")]
         [HttpPost]
         public void Post([FromForm] Song newSong)
         {
@@ -207,9 +208,9 @@ namespace MyMusic.Controllers.V1
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Songs (Name, Url, ApplicationUserId, Genre, CoverUrl, Description, ForSale, ImageFileName, ActiveSong)
+                    cmd.CommandText = @"INSERT INTO Songs (Name, Url, ApplicationUserId, Genre, CoverUrl, Description, ForSale, AudioFileName, ActiveSong, ImageFileName)
                                         OUTPUT INSERTED.Id
-                                        VALUES (@name, @url, @applicationUserId, @genre, @coverUrl, @description, @forSale, @imageFileName, @activeSong)";
+                                        VALUES (@name, @url, @applicationUserId, @genre, @coverUrl, @description, @forSale, @audioFileName, @activeSong, @imageFileName)";
 
                     cmd.Parameters.Add(new SqlParameter("@name", newSong.Name));
                     cmd.Parameters.Add(new SqlParameter("@url", newSong.Url));
@@ -218,8 +219,9 @@ namespace MyMusic.Controllers.V1
                     cmd.Parameters.Add(new SqlParameter("@coverUrl", newSong.CoverUrl));
                     cmd.Parameters.Add(new SqlParameter("@description", newSong.Description));
                     cmd.Parameters.Add(new SqlParameter("@forSale", newSong.ForSale));
-                    cmd.Parameters.Add(new SqlParameter("@imageFileName", newSong.ImageFileName));
+                    cmd.Parameters.Add(new SqlParameter("@audioFileName", newSong.AudioFileName));
                     cmd.Parameters.Add(new SqlParameter("@activeSong", newSong.ActiveSong));
+                    cmd.Parameters.Add(new SqlParameter("@imageFileName", newSong.ImageFileName));
 
                     int newId = (int)cmd.ExecuteScalar();
                     newSong.Id = newId;

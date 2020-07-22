@@ -11,7 +11,7 @@ namespace MyMusic.Models.Data
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ApplicationUserViewModel ApplicationUser { get; set; }
+        //public ApplicationUserViewModel ApplicationUser { get; set; }
         //admin user
         public String ApplicationUserId { get; set; }
         //comma seperated list of song ids

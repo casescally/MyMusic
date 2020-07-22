@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { SongContext } from "./SongProvider";
 import { getUser } from "../../API/userManager";
+import Dropzone from "react-dropzone";
 import "./Songs.css";
 
 export default (props) => {
@@ -9,10 +10,10 @@ export default (props) => {
     SongContext
   );
   const [song, setSong] = useState({});
-  const [songImages, setSongImages] = useState([]);
+  //const [songImages, setSongImages] = useState([]);
   //const [songAudioFile, setNewSongsAudioFile] = useState([]);
-  const [newSongsFiles, setNewSongsFiles] = useState([]);
-  const [newSongsAudioFile, setNewSongsAudioFile] = useState([]);
+  const [songsAudioFile, setSongsAudioFile] = useState([]);
+  const [songsAudioFileName, setSongsAudioFileName] = useState([]);
   const editMode = props.match.params.hasOwnProperty("songId");
 
   const handleControlledInputChange = (event) => {
@@ -36,18 +37,17 @@ export default (props) => {
   const constructNewSong = async () => {
     if (editMode) {
       //Filter the song images that are not blob data
-      let existingImgs = songImages.filter((song) => !song.startsWith("blob"));
-      let existingAudioFile = newSongsAudioFile.filter(
-        (file) => !file.startsWith("blob")
+      let existingAudioFile = songsAudioFile.filter(
+        (song) => !song.startsWith("blob")
       );
 
-      if (newSongsFiles.length) {
-        const filePaths = JSON.parse(await saveImages(newSongsFiles));
-        existingImgs = existingImgs.concat(filePaths);
+      if (songsAudioFile.length) {
+        const filePaths = JSON.parse(await saveFile(songsAudioFile));
+        existingAudioFile = existingAudioFile.concat(songsAudioFileName);
       }
 
-      if (newSongsAudioFile.length) {
-        const songCoverImage = JSON.parse(await saveFile(newSongsAudioFile));
+      if (songsAudioFile.length) {
+        const songCoverImage = JSON.parse(await saveFile(songsAudioFile));
         existingAudioFile = songCoverImage;
       }
 
@@ -62,60 +62,64 @@ export default (props) => {
       });
     } else {
       let filePaths = [];
-      let coverIMG = [];
-      if (newSongsFiles.length) {
-        console.log("before uploadd upp===>>>", newSongsFiles);
-        const uploadedSongImages = await saveImages(newSongsFiles);
-        filePaths = JSON.parse(uploadedSongImages);
-        const coverIMG = filePaths[0];
+      if (songsAudioFile.length) {
+        console.log("before uploadd upp===>>>", songsAudioFile);
+        const uploadedSongFile = await saveFile(songsAudioFile);
+        filePaths = JSON.parse(uploadedSongFile);
         console.log("upp==>>>>>", JSON.stringify(filePaths));
       }
 
       addSong({
-        name: song.name,
+        name: "dasdas",
+        audioFileName: JSON.stringify(songsAudioFileName),
         applicationUserId: user.id,
         genre: song.genre,
-        songPageCoverUrl: JSON.stringify([coverIMG]),
-        imageFileNames: JSON.stringify(filePaths),
-        songDescription: song.songDescription,
+        description: song.description,
         activeSong: true,
+        url: "testUrl",
+        coverUrl: "testCoverUrl",
+        imageFileName: "testImageFileName",
       }).then(() => props.history.push("/songs"));
     }
   };
 
   useEffect(() => {
-    const images = song.imageFileNames;
-    if (images) setSongImages(JSON.parse(images));
-  }, [song.imageFileNames]);
+    const audioFile = song.songAudioFile;
+    if (audioFile) setSongsAudioFile(JSON.parse(audioFile));
+  }, [song.songAudioFile]);
 
   const updateSongsAudioFile = (file) => {
     if (file && file.startsWith("blob")) {
-      setNewSongsAudioFile([file]);
+      setSongsAudioFile([file]);
     }
 
     //console.log('upppdatedddd===>>>>', file, 'newCOV', newSongsCoverFile)
   };
 
-  const handleAddAudioFile = (file) => {
+  const handleAddAudioFile = (files) => {
     //console.log("heyyup==>>>", files);
-    const newFile = URL.createObjectURL(file);
-    setNewSongsAudioFile([newFile]);
-    setNewSongsFiles(newSongsFiles);
+    console.log(files);
+    const newFile = files[0];
+    //const newFile = files.forEach((file) => URL.createObjectURL(file));
+    setSongsAudioFile(newFile);
+    //console.log(newFile);
+    setSongsAudioFileName(newFile.name);
   };
 
-  const handleRemoveImage = (index) => {
-    const imageToDelete = songImages[index];
-    let updatedImages = [...songImages];
-    updatedImages.splice(index, 1);
-
-    if (imageToDelete.startsWith("blob")) {
-      let updatedSongFiles = [...newSongsFiles];
-      updatedSongFiles.splice(index, 1);
-      setNewSongsFiles(updatedSongFiles);
+  const handleRemoveAudioFile = (index) => {
+    const audioFileToDelete = songsAudioFile[index];
+    let updatedAudioFile = [...songsAudioFile];
+    updatedAudioFile.splice(index, 1);
+    let updatedSongsAudioFile = [];
+    if (audioFileToDelete.startsWith("blob")) {
+      let updatedSongsAudioFile = [...songsAudioFile];
+      updatedSongsAudioFile.splice(index, 1);
+      setSongsAudioFile(updatedSongsAudioFile);
     }
-    setSongImages(updatedImages);
+    setSongsAudioFile(updatedSongsAudioFile);
   };
-
+  console.log("file=====>", songsAudioFile);
+  console.log("fileNAME===>>>>", songsAudioFile);
   console.log(song);
   return (
     <form className="songForm">
@@ -125,16 +129,20 @@ export default (props) => {
       <fieldset>
         <div className="form-group">
           <label htmlFor="name">Song file: </label>
-          <input
-            type="file"
-            name="file"
-            required
-            autoFocus
-            className="form-control"
-            proptype="varchar"
-            placeholder="Song file"
-            onChange={handleAddAudioFile}
-          />
+          <Dropzone
+            onChange={handleControlledInputChange}
+            //value={song.audioFileName}
+            onDrop={(acceptedFiles) => handleAddAudioFile(acceptedFiles)}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div {...getRootProps()}>
+                  <input name="audioFileName" {...getInputProps()} />
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                </div>
+              </section>
+            )}
+          </Dropzone>
         </div>
       </fieldset>
       <fieldset>
@@ -174,7 +182,7 @@ export default (props) => {
             name="songDescription"
             className="form-control"
             id="songDescriptionForm"
-            value={song.songDescription}
+            value={song.description}
             onChange={handleControlledInputChange}
           ></textarea>
         </div>

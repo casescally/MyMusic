@@ -70,16 +70,6 @@ namespace MyMusic.Controllers.V1
 
                         };        
 
-                            foundPlaylist.ApplicationUser = new ApplicationUserViewModel { 
-
-                                Id = reader.GetString(reader.GetOrdinal("AdminId")),
-                                Username = reader.GetString(reader.GetOrdinal("UserName")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
-
-                        };
-
-
                             playlists.Add(foundPlaylist);
                     }
                     } catch (Exception ex) { }
@@ -122,15 +112,6 @@ namespace MyMusic.Controllers.V1
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             ApplicationUserId = reader.GetString(reader.GetOrdinal("ApplicationUserId")),
                             SongIds = reader.GetString(reader.GetOrdinal("SongIds"))
-
-                        };        
-
-                            individualPlaylist.ApplicationUser = new ApplicationUserViewModel { 
-
-                                Id = reader.GetString(reader.GetOrdinal("UserId")),
-                                Username = reader.GetString(reader.GetOrdinal("UserName")),
-                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
 
                         };
 
