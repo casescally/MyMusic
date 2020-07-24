@@ -38,7 +38,7 @@ function App() {
         />
 <Route
           render={() =>
-            getUser() ? <ApplicationViews /> : <Redirect to="/login" />
+            getUser() ? <ApplicationViews /> : <Redirect to="/" />
           }
         /> 
         </SongProvider>

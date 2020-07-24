@@ -9,7 +9,7 @@ function Header({ history }) {
     removeUser();
     history.push("/");
   };
-
+  console.log(getUser().id);
   return (
     <nav className="header">
       <ul className="nav-items">
@@ -28,6 +28,13 @@ function Header({ history }) {
             <li className="nav-item">
               <Link to="/register">Register</Link>
             </li>
+            {getUser() ? (
+              ""
+            ) : (
+              <li className="nav-item">
+                <Link to="/songs/create">Upload Song</Link>
+              </li>
+            )}
           </>
         )}
       </ul>

@@ -7,7 +7,7 @@ import { getUser } from "../../API/userManager";
 import "react-tabs/style/react-tabs.css";
 
 export const Main = (props) => {
-  //const { songs } = useContext(SongContext);
+  const { songs } = useContext(SongContext);
 
   return (
     <div className="profile top-space">
@@ -19,15 +19,15 @@ export const Main = (props) => {
               <Tab>Merch</Tab>
               {/* <Tab>Liked Cars</Tab> */}
             </TabList>
-            {/* <TabPanel className="tabPanel">
-              <article className="profileCarList">
+            <TabPanel className="tabPanel">
+              <article className="songList">
                 <h3>Songs: {songs.length}</h3>
 
                 {songs.map((song) => (
                   <Song key={song.id} car={song} {...props} />
                 ))}
               </article>
-            </TabPanel> */}
+            </TabPanel>
             {/* <TabPanel className="tabPanel">
               <article className="events">
                 <h3>Events: {currentUsersEvents.length}</h3>

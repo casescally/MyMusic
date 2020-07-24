@@ -15,25 +15,24 @@ export default ({ song }) => {
   }, [song]);
   return (
     <section className="songSection">
-      <div class="divider div-transparent"></div>
       <div className="songInfo">
-        {songImages.map((image, i) => (
+        <button
+          className="songPlayButton"
+          onClick={function () {
+            const player = document.getElementById("songPlayer");
+            const audioPlayer = player.parentElement;
+            player.src = `${song.url}`;
+            audioPlayer.load();
+          }}
+        >
           <img
-            key={i}
-            src={`https://localhost:5001/api/SongImages/image/get?imageName=${image}`}
-            className="song_image"
-            alt="Song"
-          />
-        ))}
-        <h3 className="song__name">
-          <Link to={`/songs/${song.id}`} className="songLink">
-            {song.name}
-          </Link>
-        </h3>
+            className="playButtonIcon"
+            src="https://firebasestorage.googleapis.com/v0/b/hifi-ed258.appspot.com/o/images%2FPlayButton3.png?alt=media&token=16374b88-23e6-4c1a-843a-ed22878773f2"
+            alt="playButtonIcon"
+          ></img>
+        </button>
         <img className="coverImage" src={song.songCoverUrl}></img>
       </div>
-
-      <div className="creatorInfo"></div>
     </section>
   );
 };
