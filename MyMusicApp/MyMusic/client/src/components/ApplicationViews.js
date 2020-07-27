@@ -4,16 +4,20 @@ import Home from "./Home";
 import SongForm from "./song/SongForm";
 import { SongProvider } from "./song/SongProvider";
 import { getUser } from "../API/userManager";
+import { Main } from "./main/Main";
 
-export default function ApplicationViews() {
+export default function ApplicationViews(props) {
   return (
     <>
       <SongProvider>
         <Route
           exact
-          path="/register"
-          render={() => (getUser() ? <Redirect to="/" /> : <SongForm />)}
+          path="/songs/create"
+          render={() =>
+            getUser() ? <SongForm {...props} /> : <Redirect to="/" />
+          }
         />
+        <Route exact path="/" render={(props) => <Main {...props} />} />
       </SongProvider>
     </>
   );

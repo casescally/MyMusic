@@ -14,7 +14,6 @@ export default (props) => {
   //const [songAudioFile, setNewSongsAudioFile] = useState([]);
   const [songsAudioFile, setSongsAudioFile] = useState([]);
   const [songsAudioFileName, setSongsAudioFileName] = useState([]);
-  const editMode = props.match.params.hasOwnProperty("songId");
 
   const handleControlledInputChange = (event) => {
     const newSong = Object.assign({}, song);
@@ -23,11 +22,9 @@ export default (props) => {
   };
 
   const setDefaults = () => {
-    if (editMode) {
-      const songId = parseInt(props.match.params.songId);
-      const selectedSong = songs.find((a) => a.id === songId) || {};
-      setSong(selectedSong);
-    }
+    //const songId = parseInt(props.match.params.songId);
+    //const selectedSong = songs.find((a) => a.id === songId) || {};
+    //setSong(selectedSong);
   };
 
   useEffect(() => {
@@ -35,16 +32,14 @@ export default (props) => {
   }, [songs]);
 
   const constructNewSong = async () => {
-    if (editMode) {
-      //Filter the song images that are not blob data
-      let existingAudioFile = songsAudioFile.filter(
-        (song) => !song.startsWith("blob")
-      );
+    //Filter the song images that are not blob data
+    let existingAudioFile = songsAudioFile.filter(
+      (song) => !song.startsWith("blob")
+    );
 
-      if (songsAudioFile.length) {
-        const filePaths = JSON.parse(await saveFile(songsAudioFile));
-        existingAudioFile = existingAudioFile.concat(songsAudioFileName);
-      }
+    if (songsAudioFile.length) {
+      const filePaths = JSON.parse(await saveFile(songsAudioFile));
+      existingAudioFile = existingAudioFile.concat(songsAudioFileName);
 
       if (songsAudioFile.length) {
         const songCoverImage = JSON.parse(await saveFile(songsAudioFile));
@@ -123,9 +118,7 @@ export default (props) => {
   console.log(song);
   return (
     <form className="songForm">
-      <h2 className="songForm__title">
-        {editMode ? "Update Song" : "Add Song"}
-      </h2>
+      <h2 className="songForm__title"></h2>
       <fieldset>
         <div className="form-group">
           <label htmlFor="name">Song file: </label>
@@ -195,9 +188,7 @@ export default (props) => {
           constructNewSong();
         }}
         className="btn btn-primary"
-      >
-        {editMode ? "Save Updates" : "Add Song"}
-      </button>
+      ></button>
     </form>
   );
 };
