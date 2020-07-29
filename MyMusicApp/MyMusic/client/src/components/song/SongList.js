@@ -1,25 +1,21 @@
-import React, { useContext } from "react"
-import { SongContext } from "./SongProvider"
-import Song from "./Song"
-import "./Songs.css"
+import React, { useContext, useState } from "react";
+import { SongContext } from "./SongProvider";
+import Song from "./Song";
+import "./Songs.css";
+
 
 export function SongList(props) {
-    const { songs } = useContext(SongContext)
-console.log("here")
-    return (
-        <div className="tabPanel">
-            <h1>Songs</h1>
+  const { songs } = useContext(SongContext);
 
-   <button onClick={() => props.history.push("/songs/create")}>
-                Add Song
-            </button>
-            <div className="songs top-space">
-                {
-                    songs.map(song => {
-                        return <Song key={song.id} song={song} />
-                    })
-                }
-            </div>
-        </div>
-    )
+  return (
+    <div className="tabPanel">
+      <h1>Songs</h1>
+
+      <div className="songs top-space">
+        {songs.map((song) => {
+          return <Song key={song.id} song={song} />;
+        })}
+      </div>
+    </div>
+  );
 }

@@ -5,6 +5,7 @@ import Dropzone from "react-dropzone";
 import "./Songs.css";
 
 export default (props) => {
+  console.log(props);
   const user = getUser();
   const { songs, addSong, saveImages, saveFile, updateSong } = useContext(
     SongContext

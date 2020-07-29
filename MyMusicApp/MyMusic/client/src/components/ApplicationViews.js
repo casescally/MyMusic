@@ -17,7 +17,7 @@ export default function ApplicationViews(props) {
             getUser() ? <SongForm {...props} /> : <Redirect to="/" />
           }
         />
-        <Route exact path="/" render={(props) => <Main {...props} />} />
+        
       </SongProvider>
     </>
   );
