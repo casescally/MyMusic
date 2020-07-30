@@ -38,24 +38,21 @@ console.log('song====>>>>', selectedSong);
                 controls
               />
               {songs.map((song) => (
+                <div>{song.name}
                 <button type="button" value="button" onClick={updateSong}>
-                  Play {song.name}
-                </button>
+                  Play
+                </button></div>
               ))}
 
               {/* {songs.map((song) => (
                 <Song key={song.id} song={song} {...props} />
               ))} */}
             </TabPanel>
-            {/* <TabPanel className="tabPanel">
-              <article className="events">
-                <h3>Events: {currentUsersEvents.length}</h3>
+             <TabPanel className="tabPanel">
+              <article className="merch">
 
-                {currentUsersEvents.map((event) => (
-                  <Event key={event.id} event={event} {...props} />
-                ))}
               </article>
-            </TabPanel> */}
+            </TabPanel>
           </Tabs>
         </div>
       </section>
