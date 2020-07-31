@@ -15,7 +15,8 @@ export const Main = (props) => {
 
   function handleClick(e) {
     e.preventDefault();
-    console.log(e.target.id);
+    setSelectedSong(songs.find(song => song.name === e.target.id))
+    console.log('current playing song====>>>>', selectedSong);
   }
 
   console.log("song====>>>>", selectedSong);
