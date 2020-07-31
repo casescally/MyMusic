@@ -12,14 +12,14 @@ import "./Main.css";
 export const Main = (props) => {
   const { songs } = useContext(SongContext);
   const [selectedSong, setSelectedSong] = useState({});
-  let updateSong = (song) => {
-  setSelectedSong(song)
-}
 
-console.log('song====>>>>', selectedSong);
-  useEffect(() => {
-    updateSong()
-  });
+  function handleClick(e) {
+    e.preventDefault();
+    console.log(e.target.id);
+  }
+
+  console.log("song====>>>>", selectedSong);
+  useEffect(() => {});
 
   return (
     <div className="profile top-space">
@@ -38,20 +38,20 @@ console.log('song====>>>>', selectedSong);
                 controls
               />
               {songs.map((song) => (
-                <div>{song.name}
-                <button type="button" value="button" onClick={updateSong}>
-                  Play
-                </button></div>
+                <div>
+                  {song.name}
+                  <button type="button" value="button" id={song.name} onClick={e => handleClick(e)}>
+                    Play
+                  </button>
+                </div>
               ))}
 
               {/* {songs.map((song) => (
                 <Song key={song.id} song={song} {...props} />
               ))} */}
             </TabPanel>
-             <TabPanel className="tabPanel">
-              <article className="merch">
-
-              </article>
+            <TabPanel className="tabPanel">
+              <article className="merch"></article>
             </TabPanel>
           </Tabs>
         </div>
