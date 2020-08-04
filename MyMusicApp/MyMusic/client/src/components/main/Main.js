@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { SongContext } from "../song/SongProvider";
+import { SongContext, getSongFile } from "../song/SongProvider";
 import Song from "../song/Song";
 import { UserContext } from "../user/UserProvider";
 import { getUser } from "../../API/userManager";
@@ -8,15 +8,30 @@ import "react-tabs/style/react-tabs.css";
 import { SongList } from "../song/SongList";
 import ReactAudioPlayer from "react-audio-player";
 import "./Main.css";
+//import {getSongFile} from "../song/SongProvider"
+//import { createAuthHeaders } from "../../API/userManager";
 
 export const Main = (props) => {
   const { songs } = useContext(SongContext);
   const [selectedSong, setSelectedSong] = useState({});
-
+  const [songFile, setSongFile] = useState([]);
   function handleClick(e) {
     e.preventDefault();
-    setSelectedSong(songs.find(song => song.name === e.target.id))
-    console.log('current playing song====>>>>', selectedSong);
+
+    setSelectedSong(songs.find((song) => song.name === e.target.id));
+    console.log("current playing song====>>>>", selectedSong);
+
+    const getSongFile = (fileName) => {
+      //const authHeader = createAuthHeaders();
+      return fetch(`http://127.0.0.1:8887/${fileName}`, {})
+        .then((res) => res.json())
+        .then(setSongFile);
+    };
+
+    let selectedSongFile = getSongFile(selectedSong && selectedSong.url);
+
+    setSongFile(selectedSongFile);
+    //console.log("song file======>>>>>", selectedSongFile);
   }
 
   console.log("song====>>>>", selectedSong);
@@ -33,15 +48,16 @@ export const Main = (props) => {
               {/* <Tab>Liked Cars</Tab> */}
             </TabList>
             <TabPanel className="tabPanel" id="songTab">
-              <ReactAudioPlayer
-                src={selectedSong && selectedSong.url}
-                autoPlay
-                controls
-              />
+              <ReactAudioPlayer src={songFile} autoPlay controls />
               {songs.map((song) => (
                 <div>
                   {song.name}
-                  <button type="button" value="button" id={song.name} onClick={e => handleClick(e)}>
+                  <button
+                    type="button"
+                    value="button"
+                    id={song.name}
+                    onClick={(e) => handleClick(e)}
+                  >
                     Play
                   </button>
                 </div>

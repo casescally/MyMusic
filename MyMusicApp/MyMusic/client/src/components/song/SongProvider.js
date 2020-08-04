@@ -19,6 +19,7 @@ export const SongContext = React.createContext();
 
 export const SongProvider = (props) => {
   const [songs, setSongs] = useState([]);
+  
 
   const getSongs = () => {
     const authHeader = createAuthHeaders();
@@ -28,6 +29,7 @@ export const SongProvider = (props) => {
       .then((res) => res.json())
       .then(setSongs);
   };
+
 
   const saveImages = async (files) => {
     const authHeader = createAuthHeaders();
@@ -137,6 +139,7 @@ export const SongProvider = (props) => {
     <SongContext.Provider
       value={{
         songs,
+        //songFile,
         addSong,
         deleteSong,
         updateSong,
