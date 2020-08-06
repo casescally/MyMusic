@@ -15,27 +15,38 @@ export const Main = (props) => {
   const { songs } = useContext(SongContext);
   const [selectedSong, setSelectedSong] = useState({});
   const [songFile, setSongFile] = useState([]);
+  const [songFileUrl, setSongFileUrl] = useState([]);
+
+
   function handleClick(e) {
     e.preventDefault();
+    let theSong = songs.find((song) => song.name === e.target.id);
+    setSelectedSong(theSong);
+    //console.log("current playing song====>>>>", selectedSong);
 
-    setSelectedSong(songs.find((song) => song.name === e.target.id));
-    console.log("current playing song====>>>>", selectedSong);
+    const getSongFile = () => {
 
-    const getSongFile = (fileName) => {
-      //const authHeader = createAuthHeaders();
-      return fetch(`http://127.0.0.1:8887/${fileName}`, {})
-        .then((res) => res.json())
-        .then(setSongFile);
+      return (
+        fetch(`http://127.0.0.1:8887/${selectedSong.url}`, {})
+          .then((res) => res.blob())
+          .then((blob)=>{
+            const mp3 = new Blob([blob], { type: 'audio/mp3' })
+            var blobUrl = URL.createObjectURL(blob);
+            setSongFileUrl(blobUrl)
+            setSongFile(mp3)
+          })
+      );
     };
 
-    let selectedSongFile = getSongFile(selectedSong && selectedSong.url);
-
-    setSongFile(selectedSongFile);
-    //console.log("song file======>>>>>", selectedSongFile);
+    getSongFile()
+      //getSongFile(selectedSong.url);
   }
 
-  console.log("song====>>>>", selectedSong);
-  useEffect(() => {});
+  useEffect(() => {
+    console.log("selected", selectedSong);
+    console.log("song file====>>>>", songFile);
+    console.log("song file URL====>>>>", songFileUrl);
+  });
 
   return (
     <div className="profile top-space">
@@ -48,7 +59,7 @@ export const Main = (props) => {
               {/* <Tab>Liked Cars</Tab> */}
             </TabList>
             <TabPanel className="tabPanel" id="songTab">
-              <ReactAudioPlayer src={songFile} autoPlay controls />
+              <ReactAudioPlayer src={songFileUrl} autoPlay controls />
               {songs.map((song) => (
                 <div>
                   {song.name}
