@@ -17,7 +17,6 @@ export const Main = (props) => {
   const [songFile, setSongFile] = useState([]);
   const [songFileUrl, setSongFileUrl] = useState([]);
 
-
   function handleClick(e) {
     e.preventDefault();
     let theSong = songs.find((song) => song.name === e.target.id);
@@ -25,21 +24,17 @@ export const Main = (props) => {
     //console.log("current playing song====>>>>", selectedSong);
 
     const getSongFile = () => {
-
-      return (
-        fetch(`http://127.0.0.1:8887/${selectedSong.url}`, {})
-          .then((res) => res.blob())
-          .then((blob)=>{
-            const mp3 = new Blob([blob], { type: 'audio/mp3' })
-            var blobUrl = URL.createObjectURL(blob);
-            setSongFileUrl(blobUrl)
-            setSongFile(mp3)
-          })
-      );
+      return fetch(`http://127.0.0.1:8887/${selectedSong.url}`, {})
+        .then((res) => res.blob())
+        .then((blob) => {
+          const mp3 = new Blob([blob], { type: "audio/mp3" });
+          var blobUrl = URL.createObjectURL(blob);
+          setSongFileUrl(blobUrl);
+          setSongFile(mp3);
+        });
     };
-
-    getSongFile()
-      //getSongFile(selectedSong.url);
+    getSongFile();
+    //getSongFile(selectedSong.url);
   }
 
   useEffect(() => {
@@ -59,7 +54,12 @@ export const Main = (props) => {
               {/* <Tab>Liked Cars</Tab> */}
             </TabList>
             <TabPanel className="tabPanel" id="songTab">
-              <ReactAudioPlayer src={songFileUrl} autoPlay controls />
+              <ReactAudioPlayer
+                src={songFile && songFileUrl}
+                autoPlay="false"
+                controls
+                controlsList="nodownload"
+              />
               {songs.map((song) => (
                 <div>
                   {song.name}
