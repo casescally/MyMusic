@@ -10,12 +10,50 @@ import ReactAudioPlayer from "react-audio-player";
 import "./Main.css";
 //import {getSongFile} from "../song/SongProvider"
 //import { createAuthHeaders } from "../../API/userManager";
+import butterchurn from 'butterchurn';
+import butterchurnPresets from 'butterchurn-presets';
 
 export const Main = (props) => {
   const { songs } = useContext(SongContext);
   const [selectedSong, setSelectedSong] = useState({});
   const [songFile, setSongFile] = useState([]);
   const [songFileUrl, setSongFileUrl] = useState([]);
+  let userMediaCallback = stream => {
+      let audioContext = new AudioContext()
+  let audioNode = audioContext.createMediaStreamSource(stream)
+
+  React.createElement('b');
+  //const canvas = document.querySelector(boldElement)
+
+  
+  const canvas = document.getElementByID('root')
+  const visualizer = butterchurn.createVisualizer(audioContext, canvas, {
+    width: 800,
+    height: 600,
+  });
+  
+  // get audioNode from audio source or microphone
+  
+  visualizer.connectAudio(audioNode);
+  
+  // load a preset
+  
+  const presets = butterchurnPresets.getPresets();
+  const preset = presets['Flexi, martin + geiss - dedicated to the sherwin maxawow'];
+  
+  visualizer.loadPreset(preset, 0.0); // 2nd argument is the number of seconds to blend presets
+  
+  // resize visualizer
+  
+  visualizer.setRendererSize(1600, 1200);
+  
+  // render a frame
+  
+  visualizer.render();
+
+  }
+
+  
 
   function handleClick(e) {
     e.preventDefault();
@@ -34,6 +72,7 @@ export const Main = (props) => {
         });
     };
     getSongFile();
+    userMediaCallback(selectedSong.url)
     //getSongFile(selectedSong.url);
   }
 
@@ -54,6 +93,8 @@ export const Main = (props) => {
               {/* <Tab>Liked Cars</Tab> */}
             </TabList>
             <TabPanel className="tabPanel" id="songTab">
+
+
               <ReactAudioPlayer
                 src={songFile && songFileUrl}
                 autoPlay="false"
